@@ -217,7 +217,7 @@ const nextDev: CliCommand = async (argv) => {
 
     const { validateTurboNextConfig } =
       require('../lib/turbopack-warning') as typeof import('../lib/turbopack-warning')
-    const { loadBindings, __isCustomTurbopackBinary } =
+    const { loadBindings, __isCustomTurbopackBinary, teardownHeapProfiler } =
       require('../build/swc') as typeof import('../build/swc')
     const { eventCliSession } =
       require('../telemetry/events/version') as typeof import('../telemetry/events/version')
@@ -283,6 +283,13 @@ const nextDev: CliCommand = async (argv) => {
     if (!isCustomTurbopack) {
       await telemetry.flush()
     }
+
+    // There are some cases like test fixtures teardown that normal flush won't hit.
+    // Force flush those on those case, but don't wait for it.
+    ;['SIGTERM', 'SIGINT', 'beforeExit', 'exit'].forEach((event) =>
+      process.on(event, () => teardownHeapProfiler())
+    )
+
     return server
   } else {
     try {
