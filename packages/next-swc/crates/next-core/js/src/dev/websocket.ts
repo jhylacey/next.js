@@ -1,63 +1,63 @@
 // Adapted from https://github.com/vercel/next.js/blob/canary/packages/next/client/dev/error-overlay/websocket.ts
 
-let source: WebSocket;
-const eventCallbacks: ((event: WebsocketEvent) => void)[] = [];
+let source: WebSocket
+const eventCallbacks: ((event: WebsocketEvent) => void)[] = []
 
 // TODO: add timeout again
 // let lastActivity = Date.now()
 
 function getSocketProtocol(assetPrefix: string): string {
-  let protocol = location.protocol;
+  let protocol = location.protocol
 
   try {
     // assetPrefix is a url
-    protocol = new URL(assetPrefix).protocol;
+    protocol = new URL(assetPrefix).protocol
   } catch (_) {}
 
-  return protocol === "http:" ? "ws" : "wss";
+  return protocol === 'http:' ? 'ws' : 'wss'
 }
 
 type WebsocketEvent =
   | {
-      type: "connected";
+      type: 'connected'
     }
   | {
-      type: "message";
-      message: MessageEvent;
-    };
+      type: 'message'
+      message: MessageEvent
+    }
 
 export function addEventListener(cb: (event: WebsocketEvent) => void) {
-  eventCallbacks.push(cb);
+  eventCallbacks.push(cb)
 }
 
 export function sendMessage(data: any) {
-  if (!source || source.readyState !== source.OPEN) return;
-  return source.send(data);
+  if (!source || source.readyState !== source.OPEN) return
+  return source.send(data)
 }
 
 export type HMROptions = {
-  path: string;
-  assetPrefix: string;
-  timeout?: number;
-  log?: boolean;
-};
+  path: string
+  assetPrefix: string
+  timeout?: number
+  log?: boolean
+}
 
 export function connectHMR(options: HMROptions) {
-  const { timeout = 5 * 1000 } = options;
+  const { timeout = 5 * 1000 } = options
 
   function init() {
-    if (source) source.close();
+    if (source) source.close()
 
-    console.log("[HMR] connecting...");
+    console.log('[HMR] connecting...')
 
     function handleOnline() {
       eventCallbacks.forEach((cb) => {
         cb({
-          type: "connected",
-        });
-      });
+          type: 'connected',
+        })
+      })
 
-      if (options.log) console.log("[HMR] connected");
+      if (options.log) console.log('[HMR] connected')
       // lastActivity = Date.now()
     }
 
@@ -66,36 +66,36 @@ export function connectHMR(options: HMROptions) {
 
       eventCallbacks.forEach((cb) => {
         cb({
-          type: "message",
+          type: 'message',
           message: event,
-        });
-      });
+        })
+      })
     }
 
     // let timer: NodeJS.Timeout
 
     function handleDisconnect() {
-      source.close();
-      setTimeout(init, timeout);
+      source.close()
+      setTimeout(init, timeout)
     }
 
-    const { hostname, port } = location;
-    const protocol = getSocketProtocol(options.assetPrefix || "");
-    const assetPrefix = options.assetPrefix.replace(/^\/+/, "");
+    const { hostname, port } = location
+    const protocol = getSocketProtocol(options.assetPrefix || '')
+    const assetPrefix = options.assetPrefix.replace(/^\/+/, '')
 
     let url = `${protocol}://${hostname}:${port}${
-      assetPrefix ? `/${assetPrefix}` : ""
-    }`;
+      assetPrefix ? `/${assetPrefix}` : ''
+    }`
 
-    if (assetPrefix.startsWith("http")) {
-      url = `${protocol}://${assetPrefix.split("://")[1]}`;
+    if (assetPrefix.startsWith('http')) {
+      url = `${protocol}://${assetPrefix.split('://')[1]}`
     }
 
-    source = new window.WebSocket(`${url}${options.path}`);
-    source.onopen = handleOnline;
-    source.onerror = handleDisconnect;
-    source.onmessage = handleMessage;
+    source = new window.WebSocket(`${url}${options.path}`)
+    source.onopen = handleOnline
+    source.onerror = handleDisconnect
+    source.onmessage = handleMessage
   }
 
-  init();
+  init()
 }

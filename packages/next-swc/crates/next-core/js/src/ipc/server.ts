@@ -1,18 +1,18 @@
-import type { ClientRequest, IncomingMessage, Server } from "node:http";
-import type { AddressInfo } from "node:net";
-import http, { ServerResponse } from "node:http";
-import { headersFromEntries } from "@vercel/turbopack-next/internal/headers";
+import type { ClientRequest, IncomingMessage, Server } from 'node:http'
+import type { AddressInfo } from 'node:net'
+import http, { ServerResponse } from 'node:http'
+import { headersFromEntries } from '@vercel/turbopack-next/internal/headers'
 
 /**
  * Creates a server that listens a random port.
  */
 export function createServer(): Promise<Server> {
   return new Promise((resolve) => {
-    const server = http.createServer();
+    const server = http.createServer()
     server.listen(0, () => {
-      resolve(server);
-    });
-  });
+      resolve(server)
+    })
+  })
 }
 
 /**
@@ -26,23 +26,23 @@ export function makeRequest(
   rawQuery?: string,
   rawHeaders?: [string, string][]
 ): Promise<{
-  clientRequest: ClientRequest;
-  clientResponsePromise: Promise<IncomingMessage>;
-  serverRequest: IncomingMessage;
-  serverResponse: ServerResponse<IncomingMessage>;
+  clientRequest: ClientRequest
+  clientResponsePromise: Promise<IncomingMessage>
+  serverRequest: IncomingMessage
+  serverResponse: ServerResponse<IncomingMessage>
 }> {
   return new Promise((resolve, reject) => {
-    let clientRequest: ClientRequest | null = null;
-    let clientResponseResolve: (value: IncomingMessage) => void;
-    let clientResponseReject: (error: Error) => void;
+    let clientRequest: ClientRequest | null = null
+    let clientResponseResolve: (value: IncomingMessage) => void
+    let clientResponseReject: (error: Error) => void
     const clientResponsePromise = new Promise<IncomingMessage>(
       (resolve, reject) => {
-        clientResponseResolve = resolve;
-        clientResponseReject = reject;
+        clientResponseResolve = resolve
+        clientResponseReject = reject
       }
-    );
-    let serverRequest: IncomingMessage | null = null;
-    let serverResponse: ServerResponse<IncomingMessage> | null = null;
+    )
+    let serverRequest: IncomingMessage | null = null
+    let serverResponse: ServerResponse<IncomingMessage> | null = null
 
     const maybeResolve = () => {
       if (
@@ -50,70 +50,70 @@ export function makeRequest(
         serverRequest != null &&
         serverResponse != null
       ) {
-        cleanup();
+        cleanup()
         resolve({
           clientRequest,
           clientResponsePromise,
           serverRequest,
           serverResponse,
-        });
+        })
       }
-    };
+    }
 
     const cleanup = () => {
-      server.removeListener("error", errorListener);
-      server.removeListener("request", requestListener);
-    };
+      server.removeListener('error', errorListener)
+      server.removeListener('request', requestListener)
+    }
 
     const errorListener = (err: Error) => {
-      cleanup();
-      reject(err);
-    };
+      cleanup()
+      reject(err)
+    }
 
     const requestListener = (
       req: IncomingMessage,
       res: ServerResponse<IncomingMessage>
     ) => {
-      serverRequest = req;
-      serverResponse = res;
-      maybeResolve();
-    };
+      serverRequest = req
+      serverResponse = res
+      maybeResolve()
+    }
 
     const cleanupClientResponse = () => {
       if (clientRequest != null) {
-        clientRequest.removeListener("response", responseListener);
-        clientRequest.removeListener("error", clientResponseErrorListener);
+        clientRequest.removeListener('response', responseListener)
+        clientRequest.removeListener('error', clientResponseErrorListener)
       }
-    };
+    }
 
     const clientResponseErrorListener = (err: Error) => {
-      cleanupClientResponse();
-      clientResponseReject(err);
-    };
+      cleanupClientResponse()
+      clientResponseReject(err)
+    }
 
     const responseListener = (res: IncomingMessage) => {
-      cleanupClientResponse();
-      clientResponseResolve(res);
-    };
+      cleanupClientResponse()
+      clientResponseResolve(res)
+    }
 
-    server.once("request", requestListener);
-    server.once("error", errorListener);
+    server.once('request', requestListener)
+    server.once('error', errorListener)
 
-    const address = server.address() as AddressInfo;
+    const address = server.address() as AddressInfo
 
     clientRequest = http.request({
-      host: "localhost",
+      host: 'localhost',
       port: address.port,
       method,
       path:
         rawQuery != null && rawQuery.length > 0 ? `${path}?${rawQuery}` : path,
       headers: rawHeaders != null ? headersFromEntries(rawHeaders) : undefined,
-    });
+    })
 
     // Otherwise Node.js waits for the first chunk of data to be written before sending the request.
-    clientRequest.flushHeaders();
+    clientRequest.flushHeaders()
 
-    clientRequest.once("response", responseListener);
-    clientRequest.once("error", clientResponseErrorListener);
-  });
+    clientRequest.once('response', responseListener)
+    clientRequest.once('error', clientResponseErrorListener)
+  })
 }
