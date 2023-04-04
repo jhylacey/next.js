@@ -157,7 +157,8 @@ pub async fn get_client_module_options_context(
 
     let tsconfig = get_typescript_transform_options(project_path);
     let decorators_options = get_decorators_transform_options(project_path);
-    let jsx_runtime_options = get_jsx_transform_options(project_path);
+    let mdx_rs_options = (*next_config.await?).experimental.mdx_rs.unwrap_or(false);
+    let jsx_runtime_options = get_jsx_transform_options(project_path, mdx_rs_options);
     let enable_webpack_loaders = {
         let options = &*next_config.webpack_loaders_options().await?;
         let loaders_options = WebpackLoadersOptions {
@@ -195,6 +196,7 @@ pub async fn get_client_module_options_context(
         }),
         enable_webpack_loaders,
         enable_typescript_transform: Some(tsconfig),
+        enable_mdx_rs: mdx_rs_options,
         decorators: Some(decorators_options),
         rules: vec![(
             foreign_code_context_condition(next_config).await?,

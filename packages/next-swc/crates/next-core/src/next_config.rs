@@ -353,6 +353,7 @@ pub struct ExperimentalConfig {
     pub app_dir: Option<bool>,
     pub server_components_external_packages: Option<Vec<String>>,
     pub turbo: Option<ExperimentalTurboConfig>,
+    pub mdx_rs: Option<bool>,
 
     // unsupported
     adjust_font_fallbacks: Option<bool>,
@@ -378,7 +379,6 @@ pub struct ExperimentalConfig {
     large_page_data_bytes: Option<f64>,
     legacy_browsers: Option<bool>,
     manual_client_base_path: Option<bool>,
-    mdx_rs: Option<serde_json::Value>,
     middleware_prefetch: Option<MiddlewarePrefetchType>,
     modularize_imports: Option<serde_json::Value>,
     new_next_link_behavior: Option<bool>,

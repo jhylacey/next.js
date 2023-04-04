@@ -9,6 +9,7 @@ const supportedTurbopackNextConfigOptions = [
   'experimental.appDir',
   'experimental.serverComponentsExternalPackages',
   'experimental.turbo',
+  'experimental.mdxRs',
   'images',
   'pageExtensions',
   'onDemandEntries',
