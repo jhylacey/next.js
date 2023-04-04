@@ -1,10 +1,10 @@
-const variableQuery = require("$DIR/__generated__/InputVariableQuery.graphql.ts");
-fetchQuery(require("$DIR/__generated__/InputUsedInFunctionCallQuery.graphql.ts"));
+const variableQuery = require("H:/Code/vercel/nextpack/next.js/packages/next-swc/crates/core/__generated__/InputVariableQuery.graphql.ts");
+fetchQuery(require("H:/Code/vercel/nextpack/next.js/packages/next-swc/crates/core/__generated__/InputUsedInFunctionCallQuery.graphql.ts"));
 function SomeQueryComponent() {
-    useLazyLoadQuery(require("$DIR/__generated__/InputInHookQuery.graphql.ts"));
+    useLazyLoadQuery(require("H:/Code/vercel/nextpack/next.js/packages/next-swc/crates/core/__generated__/InputInHookQuery.graphql.ts"));
 }
-const variableMutation = require("$DIR/__generated__/InputVariableMutation.graphql.ts");
-commitMutation(environment, require("$DIR/__generated__/InputUsedInFunctionCallMutation.graphql.ts"));
+const variableMutation = require("H:/Code/vercel/nextpack/next.js/packages/next-swc/crates/core/__generated__/InputVariableMutation.graphql.ts");
+commitMutation(environment, require("H:/Code/vercel/nextpack/next.js/packages/next-swc/crates/core/__generated__/InputUsedInFunctionCallMutation.graphql.ts"));
 function SomeMutationComponent() {
-    useMutation(require("$DIR/__generated__/InputInHookMutation.graphql.ts"));
+    useMutation(require("H:/Code/vercel/nextpack/next.js/packages/next-swc/crates/core/__generated__/InputInHookMutation.graphql.ts"));
 }

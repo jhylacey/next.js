@@ -1,12 +1,12 @@
 // This is a comment.
-"use strict";
+'use strict';
 // This is a comment.
-"foo";
-import "fs";
-"bar";
+'foo';
+import 'fs';
+'bar';
 // This is a comment.
 1 + 1;
-"baz";
+'baz';
 export default function() {
     return null;
 }
